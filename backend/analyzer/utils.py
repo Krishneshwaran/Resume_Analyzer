@@ -18,52 +18,66 @@ def parse_pdf_resume(pdf_file) -> str:
         raise Exception(f"Error parsing PDF: {str(e)}")
 
 def create_analysis_prompt(resume_text: str, job_description: str) -> str:
-    return f"""You are an ATS (Applicant Tracking System) analyzer. Analyze the following resume against the job description and provide a structured response.
+    return f"""
+You are an ATS (Applicant Tracking System) and resume evaluator. Analyze the following resume against the provided job description and evaluate its various aspects based on the following criteria. Provide a detailed assessment and scores for each category. If the resume passes a category, explain why it is good; if it does not pass, explain why it is lacking. Ensure the response is structured strictly in JSON format as shown below.
 
-    Job Description:
-    {job_description}
+---
 
-    Resume:
-    {resume_text}
+#### Job Description:
+{job_description}
 
-    Respond ONLY with a JSON object in the following format, without any additional text or explanation:
+#### Resume:
+{resume_text}
 
-    {{
-        "overall_match_percentage": <number between 0-100>,
-        "keyword_analysis": {{
-            "matched_keywords": ["keyword1", "keyword2"],
-            "missing_keywords": ["keyword1", "keyword2"],
-            "keyword_match_score": <number between 0-100>
+---
+
+Respond ONLY with a JSON object in the following format, without any additional text or explanation:
+
+{{
+    "ats_parse_rate": {{
+        "score": <number between 0-100>,
+        "reason": "<detailed explanation of why the ATS parse rate is good or not good>"
+    }},
+    "contact_information": {{
+        "score": <number between 0-100>,
+        "reason": "<detailed explanation of whether LinkedIn, professional email, and phone number are provided and why the score is given>"
+    }},
+    "skills_analysis": {{
+        "hard_skills": {{
+            "matched": ["skill1", "skill2"],
+            "not_suited": ["skill1", "skill2"],
+            "score": <number between 0-100>
         }},
-        "skills_analysis": {{
-            "hard_skills": {{
-                "matched": ["skill1", "skill2"],
-                "missing": ["skill1", "skill2"],
-                "score": <number between 0-100>
-            }},
-            "soft_skills": {{
-                "matched": ["skill1", "skill2"],
-                "missing": ["skill1", "skill2"],
-                "score": <number between 0-100>
-            }}
+        "soft_skills": {{
+            "matched": ["skill1", "skill2"],
+            "not_suited": ["skill1", "skill2"],
+            "score": <number between 0-100>
         }},
-        "experience_analysis": {{
-            "relevance_score": <number between 0-100>,
-            "years_of_experience": <number>,
-            "relevant_positions": ["position1", "position2"]
-        }},
-        "education_analysis": {{
-            "relevance_score": <number between 0-100>,
-            "qualifications": ["qualification1", "qualification2"]
-        }},
-        "formatting_score": <number between 0-100>,
-        "section_scores": {{
-            "skills_section": <number between 0-100>,
-            "experience_section": <number between 0-100>,
-            "education_section": <number between 0-100>
-        }},
-        "detailed_feedback": "Provide specific, actionable feedback here"
-    }}"""
+        "reason": "<detailed explanation of why the skills are or are not suited for the job description>"
+    }},
+    "description_quality": {{
+        "score": <number between 0-100>,
+        "reason": "<detailed explanation of whether the description is clear, concise, and well-structured>"
+    }},
+    "experience_analysis": {{
+        "years_of_experience": <number>,
+        "score": <number between 0-100>,
+        "reason": "<detailed explanation of whether the experience is sufficient for the job and why>"
+    }},
+    "education_analysis": {{
+        "score": <number between 0-100>,
+        "reason": "<detailed explanation of whether the qualifications meet the job's requirements>"
+    }},
+    "projects_analysis": {{
+        "score": <number between 0-100>,
+        "reason": "<detailed explanation of how well the projects align with the job description>"
+    }},
+    "overall_summary": {{
+        "total_score": <number between 0-100>,
+        "summary": "<high-level summary of the resume's strengths and weaknesses>"
+    }}
+}}
+"""
 
 def extract_json_from_response(text: str) -> Dict:
     try:
@@ -77,40 +91,18 @@ def extract_json_from_response(text: str) -> Dict:
             pass
     
     return {
-        "overall_match_percentage": 0,
-        "keyword_analysis": {
-            "matched_keywords": [],
-            "missing_keywords": [],
-            "keyword_match_score": 0
-        },
+        "ats_parse_rate": {"score": 0, "reason": "Error analyzing ATS parse rate."},
+        "contact_information": {"score": 0, "reason": "Error analyzing contact information."},
         "skills_analysis": {
-            "hard_skills": {
-                "matched": [],
-                "missing": [],
-                "score": 0
-            },
-            "soft_skills": {
-                "matched": [],
-                "missing": [],
-                "score": 0
-            }
+            "hard_skills": {"matched": [], "not_suited": [], "score": 0},
+            "soft_skills": {"matched": [], "not_suited": [], "score": 0},
+            "reason": "Error analyzing skills."
         },
-        "experience_analysis": {
-            "relevance_score": 0,
-            "years_of_experience": 0,
-            "relevant_positions": []
-        },
-        "education_analysis": {
-            "relevance_score": 0,
-            "qualifications": []
-        },
-        "formatting_score": 0,
-        "section_scores": {
-            "skills_section": 0,
-            "experience_section": 0,
-            "education_section": 0
-        },
-        "detailed_feedback": "Error analyzing resume. Please try again."
+        "description_quality": {"score": 0, "reason": "Error analyzing description quality."},
+        "experience_analysis": {"years_of_experience": 0, "score": 0, "reason": "Error analyzing experience."},
+        "education_analysis": {"score": 0, "reason": "Error analyzing education."},
+        "projects_analysis": {"score": 0, "reason": "Error analyzing projects."},
+        "overall_summary": {"total_score": 0, "summary": "Error generating overall summary."}
     }
 
 def analyze_resume(resume_text: str, job_description: str, api_key: str) -> Dict:
@@ -123,14 +115,14 @@ def analyze_resume(resume_text: str, job_description: str, api_key: str) -> Dict
         analysis_result = extract_json_from_response(response.text)
         
         required_fields = [
-            "overall_match_percentage",
-            "keyword_analysis",
+            "ats_parse_rate",
+            "contact_information",
             "skills_analysis",
+            "description_quality",
             "experience_analysis",
             "education_analysis",
-            "formatting_score",
-            "section_scores",
-            "detailed_feedback"
+            "projects_analysis",
+            "overall_summary"
         ]
         
         for field in required_fields:
