@@ -1,9 +1,9 @@
 from django import forms
-from .models import ResumeAnalysis  # Add this import
+from .models import Resume
 
-class ResumeAnalysisForm(forms.ModelForm):
-    api_key = "AIzaSyC4o0xOcajPZf6Tl-13RSEAEBQiLT-QkE8"
-    
+class ResumeForm(forms.ModelForm):
     class Meta:
-        model = ResumeAnalysis
-        fields = ['resume_file', 'job_description']
+        model = Resume
+        fields = ['pdf_file', 'job_description']  # Adjust fields as needed
+
+    # Optional: Add custom validation or fields if necessary
