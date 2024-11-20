@@ -1,0 +1,93 @@
+
+
+<!-- templates/resume_analyzer/results.html -->
+{% extends 'resume_analyzer/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">Analysis Results</h1>
+    
+    <!-- Overall Match Score -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">
+            Match Score: 
+            {% if analysis.overall_match_percentage >= 80 %}🟢
+            {% elif analysis.overall_match_percentage >= 60 %}🟡
+            {% else %}🔴
+            {% endif %}
+            {{ analysis.overall_match_percentage }}%
+        </h2>
+        
+        <div class="grid grid-cols-3 gap-4">
+            <div class="text-center">
+                <p class="text-gray-600">Skills Match</p>
+                <p class="text-2xl font-bold">{{ analysis.skills_analysis.hard_skills.score }}%</p>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-600">Experience Match</p>
+                <p class="text-2xl font-bold">{{ analysis.experience_analysis.relevance_score }}%</p>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-600">Education Match</p>
+                <p class="text-2xl font-bold">{{ analysis.education_analysis.relevance_score }}%</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Keyword Analysis -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4">📝 Keyword Analysis</h3>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <h4 class="font-bold mb-2">Matched Keywords:</h4>
+                <p>{{ analysis.keyword_analysis.matched_keywords|join:", "|default:"None" }}</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Missing Keywords:</h4>
+                <p>{{ analysis.keyword_analysis.missing_keywords|join:", "|default:"None" }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Skills Breakdown -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4">🔧 Skills Breakdown</h3>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <h4 class="font-bold mb-2">Hard Skills</h4>
+                {% for skill in analysis.skills_analysis.hard_skills.matched %}
+                <p>✅ {{ skill }}</p>
+                {% endfor %}
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Soft Skills</h4>
+                {% for skill in analysis.skills_analysis.soft_skills.matched %}
+                <p>✅ {{ skill }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Experience Analysis -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4">💼 Experience Analysis</h3>
+        <p class="mb-2"><strong>Years of Experience:</strong> {{ analysis.experience_analysis.years_of_experience }}</p>
+        <h4 class="font-bold mb-2">Relevant Positions:</h4>
+        <ul class="list-disc list-inside">
+            {% for position in analysis.experience_analysis.relevant_positions %}
+            <li>{{ position }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Detailed Feedback -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4">📋 Detailed Feedback</h3>
+        <p>{{ analysis.detailed_feedback }}</p>
+    </div>
+    
+    <a href="{% url 'analyze_resume' %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Analyze Another Resume
+    </a>
+</div>
+{% endblock %}
