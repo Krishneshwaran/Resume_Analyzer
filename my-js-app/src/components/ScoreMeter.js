@@ -1,18 +1,19 @@
-import React from 'react';
-import { Award, TrendingUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { Award, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ScoreMeter = ({ score, sections }) => {
-  const getScoreColor = (value) => {
-    if (value >= 90) return 'from-green-500 to-green-600';
-    if (value >= 70) return 'from-yellow-500 to-yellow-600';
-    return 'from-red-500 to-red-600';
+  const [showLogout, setShowLogout] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Redirect to home
+    navigate('/');
   };
 
-  const lowestScore = Math.min(...sections.map((s) => s.score));
-  const highestScore = Math.max(...sections.map((s) => s.score));
-
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+    <div className="bg-white rounded-xl shadow-lg p-6 mb-8 relative">
+      {/* Score Meter Content */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Main Score */}
         <div className="flex items-center space-x-4">
@@ -50,39 +51,32 @@ const ScoreMeter = ({ score, sections }) => {
             <p className="text-gray-600">Resume Performance</p>
           </div>
         </div>
+      </div>
 
-        {/* Score Range */}
-        <div className="flex flex-col justify-center">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">Score Range</span>
-            <span className="text-sm font-bold text-gray-800">
-              {lowestScore}% - {highestScore}%
-            </span>
-          </div>
-          <div className="h-2 bg-gray-200 rounded-full">
-            <div
-              className={`h-full rounded-full bg-gradient-to-r ${getScoreColor(score)}`}
-              style={{ width: `${score}%` }}
-            />
-          </div>
-        </div>
+      {/* Profile Button on the Right */}
+      <div className="absolute top-6 right-6">
+        <button
+          className="flex items-center px-4 py-2 bg-gray-100 rounded-full text-gray-700 hover:bg-gray-200 focus:outline-none"
+          onClick={() => setShowLogout(!showLogout)}
+        >
+          <User className="h-5 w-5 mr-2" />
+          <span>Profile</span>
+        </button>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center">
-              <TrendingUp className="h-5 w-5 text-blue-600 mr-2" />
-              <span className="text-sm font-medium text-gray-600">Highest</span>
-            </div>
-            <p className="text-lg font-bold text-gray-800 mt-1">{highestScore}%</p>
-          </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center">
-              <TrendingUp className="h-5 w-5 text-blue-600 mr-2 transform rotate-180" />
-              <span className="text-sm font-medium text-gray-600">Lowest</span>
-            </div>
-            <p className="text-lg font-bold text-gray-800 mt-1">{lowestScore}%</p>
-          </div>
+        {/* Logout Button with Transition */}
+        <div
+          className={`transition-all duration-300 ease-in-out transform ${
+            showLogout
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 -translate-y-4 pointer-events-none'
+          }`}
+        >
+          <button
+            className="mt-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>

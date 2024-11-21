@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, XCircle, CheckCircle, AlertCircle } from 'lucide-react';
+import { Star, CheckCircle } from 'lucide-react';
 
 const SectionDetail = ({ section }) => {
   const getScoreColor = (score) => {
@@ -29,10 +29,7 @@ const SectionDetail = ({ section }) => {
             <h3 className="text-lg font-medium text-gray-700 mb-4">Key Recommendations</h3>
             <ul className="space-y-3">
               {section.details.feedback.recommendations.map((rec, idx) => (
-                <li
-                  key={idx}
-                  className="flex items-start bg-blue-50 p-4 rounded-lg"
-                >
+                <li key={idx} className="flex items-start bg-blue-50 p-4 rounded-lg">
                   <CheckCircle className="h-5 w-5 text-blue-500 mr-3 flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">{rec}</span>
                 </li>
@@ -49,12 +46,12 @@ const SectionDetail = ({ section }) => {
         </div>
       </div>
 
-      {/* Strengths and Improvements Grid */}
+      {/* Dynamic Strengths and Improvements Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow-lg p-6">
           <h3 className="text-lg font-medium text-gray-700 flex items-center mb-4">
             <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-            Strengths
+            {section.details.strengthsHeading || 'Strengths'}
           </h3>
           <ul className="space-y-3">
             {section.details.strengths.map((strength, idx) => (
@@ -68,13 +65,13 @@ const SectionDetail = ({ section }) => {
 
         <div className="bg-white rounded-xl shadow-lg p-6">
           <h3 className="text-lg font-medium text-gray-700 flex items-center mb-4">
-            <AlertCircle className="h-5 w-5 text-yellow-500 mr-2" />
-            Areas for Improvement
+            <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+            {section.details.improvementsHeading || 'Areas for Improvement'}
           </h3>
           <ul className="space-y-3">
             {section.details.improvements.map((improvement, idx) => (
-              <li key={idx} className="flex items-center bg-red-50 p-3 rounded-lg">
-                <XCircle className="h-4 w-4 text-red-500 mr-3 flex-shrink-0" />
+              <li key={idx} className="flex items-center bg-green-50 p-3 rounded-lg">
+                <Star className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
                 <span className="text-gray-700">{improvement}</span>
               </li>
             ))}

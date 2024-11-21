@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -39,33 +42,45 @@ const Login = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
   
-    setIsLoading(true);
-    try {
-      const response = await fetch('http://localhost:8000/api/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  setIsLoading(true);
+  try {
+    const response = await fetch('http://localhost:8000/api/login/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      toast.success('Login successful!', {
+        autoClose: 500, // The toast will automatically close after 3 seconds
+        onClose: () => {
+          // Navigate after the toast message is closed
+          navigate('/home');
+        }
       });
-  
-      if (response.ok) {
-        const data = await response.json();
-        alert('Login successful!');
-        navigate('/'); // Redirect to a dashboard or home page
-      } else {
-        const data = await response.json();
-        alert(data.error || 'Login failed');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('An error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
+    } else {
+      const data = await response.json();
+      toast.error(data.error || 'Login failed', {
+        autoClose: 3000 // The toast will automatically close after 3 seconds
+      });
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    toast.error('An error occurred. Please try again.', {
+      autoClose: 3000 // The toast will automatically close after 3 seconds
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
   
 
   return (
@@ -185,6 +200,9 @@ const Login = () => {
           </form>
         </div>
       </div>
+
+      {/* Toast Container for rendering the toast notifications */}
+      <ToastContainer />
     </div>
   );
 };

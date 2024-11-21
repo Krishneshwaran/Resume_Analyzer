@@ -8,6 +8,8 @@ import {
   Code, Layout, Layers, Palette, Download 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const ResumeAnalysis = () => {
   const location = useLocation();
@@ -33,6 +35,8 @@ const ResumeAnalysis = () => {
         icon: <Award className="h-5 w-5" />,
         score: analysisResult.ats_parse_rate?.score || 0,
         details: {
+          strengthsHeading: 'ATS Parsing Strengths',
+          improvementsHeading: 'Suggestions for ATS Compatibility',
           strengths: ['ATS Parsing Details'],
           improvements: ['Improve ATS Compatibility'],
           feedback: {
@@ -48,6 +52,8 @@ const ResumeAnalysis = () => {
         icon: <FileText className="h-5 w-5" />,
         score: analysisResult.contact_information?.score || 0,
         details: {
+          strengthsHeading: 'Contact Information Strengths',
+          improvementsHeading: 'Contact Details Suggestions',
           strengths: ['Contact Information Evaluation'],
           improvements: ['Enhance Contact Details'],
           feedback: {
@@ -63,8 +69,10 @@ const ResumeAnalysis = () => {
         icon: <Code className="h-5 w-5" />,
         score: analysisResult.skills_analysis?.hard_skills?.score || 0,
         details: {
+          strengthsHeading: 'Matched Hard Skills',
+          improvementsHeading: 'Soft Skills Suggestions',
           strengths: analysisResult.skills_analysis?.hard_skills?.matched || ['No specific hard skills matched'],
-          improvements: analysisResult.skills_analysis?.hard_skills?.not_suited || ['No improvements suggested'],
+          improvements: analysisResult.skills_analysis?.soft_skills?.matched || ['No improvements suggested'],
           feedback: {
             overview: analysisResult.skills_analysis?.reason || 'No specific skills analysis available.',
             recommendations: ['Continuously update and refine skills'],
@@ -78,6 +86,8 @@ const ResumeAnalysis = () => {
         icon: <Layout className="h-5 w-5" />,
         score: analysisResult.description_quality?.score || 0,
         details: {
+          strengthsHeading: 'Resume Description Strengths',
+          improvementsHeading: 'Suggestions for Description Clarity',
           strengths: ['Description Evaluation'],
           improvements: ['Enhance Resume Description'],
           feedback: {
@@ -93,6 +103,8 @@ const ResumeAnalysis = () => {
         icon: <BriefcaseIcon className="h-5 w-5" />,
         score: analysisResult.experience_analysis?.score || 0,
         details: {
+          strengthsHeading: 'Professional Experience Highlights',
+          improvementsHeading: 'Experience Enhancement Suggestions',
           strengths: ['Experience Evaluation'],
           improvements: ['Enhance Professional Experience'],
           feedback: {
@@ -108,6 +120,8 @@ const ResumeAnalysis = () => {
         icon: <GraduationCap className="h-5 w-5" />,
         score: analysisResult.education_analysis?.score || 0,
         details: {
+          strengthsHeading: 'Education Strengths',
+          improvementsHeading: 'Suggestions for Academic Improvements',
           strengths: ['Educational Background Evaluation'],
           improvements: ['Highlight Academic Achievements'],
           feedback: {
@@ -123,6 +137,8 @@ const ResumeAnalysis = () => {
         icon: <Layers className="h-5 w-5" />,
         score: analysisResult.projects_analysis?.score || 0,
         details: {
+          strengthsHeading: 'Project Strengths',
+          improvementsHeading: 'Suggestions for Project Details',
           strengths: ['Project Evaluation'],
           improvements: ['Add More Project Details'],
           feedback: {
@@ -138,6 +154,8 @@ const ResumeAnalysis = () => {
         icon: <Palette className="h-5 w-5" />,
         score: analysisResult.overall_summary?.total_score || 0,
         details: {
+          strengthsHeading: 'Overall Resume Strengths',
+          improvementsHeading: 'General Resume Suggestions',
           strengths: ['Overall Resume Evaluation'],
           improvements: ['Continuous Improvement'],
           feedback: {
@@ -148,7 +166,7 @@ const ResumeAnalysis = () => {
         }
       }
     ];
-
+    
     setActiveSection(transformedSections[0]);
     setAnalysisData({
       sections: transformedSections,
@@ -157,8 +175,32 @@ const ResumeAnalysis = () => {
   }, [location.state, navigate]);
 
   const handleDownload = () => {
-    // Implement PDF report generation here
-    console.log('Downloading report...');
+    const doc = new jsPDF();
+    const { sections, overallScore } = analysisData;
+
+    // Add Title
+    doc.setFontSize(18);
+    doc.text('Resume Analysis Report', 10, 10);
+
+    // Add Overall Score
+    doc.setFontSize(14);
+    doc.text(`Overall Score: ${overallScore}`, 10, 20);
+
+    // Add Section Details in Table
+    const tableData = sections.map((section) => [
+      section.title,
+      section.score,
+      section.details.strengths.join(', '),
+      section.details.improvements.join(', ')
+    ]);
+    autoTable(doc, {
+      head: [['Section', 'Score', 'Strengths', 'Improvements']],
+      body: tableData,
+      startY: 30
+    });
+
+    // Save the PDF
+    doc.save('Resume_Analysis_Report.pdf');
   };
 
   if (!analysisData) {
