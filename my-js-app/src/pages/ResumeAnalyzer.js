@@ -66,7 +66,7 @@ const ResumeAnalyzer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
+    <div className="min-h-screen bg-blue-0">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,41 +77,45 @@ const ResumeAnalyzer = () => {
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
-            className="glass-container rounded-xl overflow-hidden"
+            className="bg-blue-200 rounded-xl overflow-hidden"
           >
             <div className="p-8">
               <div className="flex items-center justify-center mb-8">
-                <FileText className="h-12 w-12 text-white" />
-                <h1 className="text-3xl font-bold text-white ml-4">Resume Analyzer</h1>
+                <FileText className="h-12 w-12 text-black" />
+                <h1 className="text-3xl text-black/75 ml-4">Resume Analyzer</h1>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-black mb-2">
                     Job Description
                   </label>
                   <textarea
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg glass-input text-gray-800 min-h-[150px]"
+                    className="w-full px-4 py-3 rounded-lg glass-input text-black/50 min-h-[150px]"
                     placeholder="Paste the job description here..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-black mb-2">
                     Upload Resume
                   </label>
                   <div
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    className={`glass-card rounded-lg p-8 text-center ${isDragging ? "bg-white/50 border-white/40" : "hover:border-white/40"}`}
+                    className={`bg-white rounded-lg p-8 text-center ${
+                      isDragging
+                        ? "bg-white border-black"
+                        : "hover:border-white/40"
+                    }`}
                   >
-                    <Upload className="h-12 w-12 mx-auto text-white/70" />
-                    <p className="mt-2 text-sm text-white">
+                    <Upload className="h-12 w-12 mx-auto text-black" />
+                    <p className="mt-2 text-sm text-black">
                       Drag and drop your resume here, or{" "}
-                      <label className="text-white hover:text-white/80 cursor-pointer underline">
+                      <label className="text-blue-500 hover:text-whiteblack cursor-pointer underline">
                         browse
                         <input
                           type="file"
@@ -122,7 +126,7 @@ const ResumeAnalyzer = () => {
                       </label>
                     </p>
                     {file && (
-                      <p className="mt-2 text-sm text-white">
+                      <p className="mt-2 text-sm text-black">
                         Selected: {file.name}
                       </p>
                     )}
@@ -134,10 +138,14 @@ const ResumeAnalyzer = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={analyzeResume}
                   disabled={isLoading || !file || !jobDescription}
-                  className={`w-full py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 ${isLoading || !file || !jobDescription ? "bg-white/20 cursor-not-allowed text-white/50" : "btn-primary"}`}
+                  className={`w-full py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 ${
+                    isLoading || !file || !jobDescription
+                      ? "bg-white cursor-not-allowed text-black"
+                      : "btn-primary"
+                  }`}
                 >
                   {isLoading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue border-t-transparent" />
                   ) : (
                     <>
                       <Send className="h-5 w-5" />
@@ -145,11 +153,6 @@ const ResumeAnalyzer = () => {
                     </>
                   )}
                 </motion.button>
-                {error && (
-                  <p className="mt-4 text-sm text-red-500">
-                    Error: {error}
-                  </p>
-                )}
               </div>
             </div>
           </motion.div>

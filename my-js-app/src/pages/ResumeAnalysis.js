@@ -1,190 +1,179 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ScoreMeter from '../components/ScoreMeter';
 import SectionButton from '../components/SectionButton';
 import SectionDetail from '../components/SectionDetail';
-import { FileText, BriefcaseIcon, GraduationCap, Award, Code, Layout, FileSpreadsheet, Layers, Palette, Download } from 'lucide-react';
+import { 
+  FileText, BriefcaseIcon, GraduationCap, Award, 
+  Code, Layout, Layers, Palette, Download 
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ResumeAnalysis = () => {
-  const sections = [
-    {
-      id: 'overall',
-      title: 'Overall Impact',
-      icon: <Award className="h-5 w-5" />,
-      score: 85,
-      details: {
-        strengths: [
-          'Clear and professional presentation',
-          'Strong quantifiable achievements',
-          'Relevant skills highlighted'
-        ],
-        improvements: [
-          'Add more industry-specific keywords',
-          'Enhance personal branding statement',
-          'Include more metrics and results'
-        ],
-        feedback: {
-          overview: 'Your resume demonstrates strong potential with clear achievements and professional presentation.',
-          recommendations: [
-            'Incorporate more industry-specific keywords to improve ATS compatibility',
-            'Strengthen your personal branding statement to stand out',
-            'Add more quantifiable results to showcase impact'
-          ],
-          impact: 'These improvements could significantly increase your resume\'s effectiveness and interview chances.'
-        }
-      }
-    },
-    {
-      id: 'content',
-      title: 'Content Analysis',
-      icon: <FileText className="h-5 w-5" />,
-      score: 82,
-      details: {
-        strengths: ['Strong action verbs', 'Relevant keywords', 'Clear achievements'],
-        improvements: ['Add more metrics', 'Enhance job descriptions', 'Include more industry terms'],
-        feedback: {
-          overview: 'Your resume content is well-written but could benefit from more specific details.',
-          recommendations: [
-            'Include more quantifiable achievements and metrics',
-            'Add industry-specific terminology',
-            'Enhance job descriptions with more impact-focused language'
-          ],
-          impact: 'Strong content directly influences how well your resume performs in ATS systems.'
-        }
-      }
-    },
-    {
-      id: 'format',
-      title: 'Format & Structure',
-      icon: <Layout className="h-5 w-5" />,
-      score: 88,
-      details: {
-        strengths: ['Clean layout', 'Consistent formatting', 'Good use of white space'],
-        improvements: ['Adjust margins', 'Optimize section spacing', 'Standardize bullet points'],
-        feedback: {
-          overview: 'Your resume format is professional and easy to read.',
-          recommendations: [
-            'Fine-tune margin settings for optimal space usage',
-            'Ensure consistent spacing between sections',
-            'Standardize bullet point formatting'
-          ],
-          impact: 'A well-structured resume improves readability and professional appearance.'
-        }
-      }
-    },
-    {
-      id: 'organization',
-      title: 'Section Organization',
-      icon: <Layers className="h-5 w-5" />,
-      score: 86,
-      details: {
-        strengths: ['Logical flow', 'Clear hierarchy', 'Important info prominent'],
-        improvements: ['Reorder sections', 'Group related items', 'Highlight key achievements'],
-        feedback: {
-          overview: 'Your resume sections follow a logical order but could be optimized.',
-          recommendations: [
-            'Place most relevant sections at the top',
-            'Group related skills and experiences',
-            'Create a dedicated achievements section'
-          ],
-          impact: 'Proper organization ensures key information is noticed quickly.'
-        }
-      }
-    },
-    {
-      id: 'skills',
-      title: 'Skills Assessment',
-      icon: <Code className="h-5 w-5" />,
-      score: 84,
-      details: {
-        strengths: ['Relevant technical skills', 'Good skill categorization', 'Updated technologies'],
-        improvements: ['Add skill levels', 'Remove outdated skills', 'Include soft skills'],
-        feedback: {
-          overview: 'Your skills section effectively presents your capabilities.',
-          recommendations: [
-            'Include proficiency levels for technical skills',
-            'Add more relevant soft skills',
-            'Remove outdated or irrelevant skills'
-          ],
-          impact: 'A well-crafted skills section is crucial for technical positions.'
-        }
-      }
-    },
-    {
-      id: 'style',
-      title: 'Resume Style & Design',
-      icon: <Palette className="h-5 w-5" />,
-      score: 90,
-      details: {
-        strengths: ['Professional design', 'Consistent typography', 'Good visual hierarchy'],
-        improvements: ['Enhance visual appeal', 'Adjust font sizes', 'Improve alignment'],
-        feedback: {
-          overview: 'Your resume has a clean, professional design that stands out.',
-          recommendations: [
-            'Fine-tune typography for better hierarchy',
-            'Ensure consistent alignment throughout',
-            'Consider subtle design elements to enhance appeal'
-          ],
-          impact: 'Professional design creates a strong first impression.'
-        }
-      }
-    },
-    {
-      id: 'experience',
-      title: 'Experience Details',
-      icon: <BriefcaseIcon className="h-5 w-5" />,
-      score: 87,
-      details: {
-        strengths: ['Clear progression', 'Relevant experience', 'Achievement-focused'],
-        improvements: ['Add more context', 'Highlight leadership', 'Include projects'],
-        feedback: {
-          overview: 'Your experience section effectively showcases your career growth.',
-          recommendations: [
-            'Add more context to key achievements',
-            'Highlight leadership and initiative',
-            'Include relevant projects and outcomes'
-          ],
-          impact: 'Detailed experience section demonstrates your value to employers.'
-        }
-      }
-    },
-    {
-      id: 'education',
-      title: 'Education Background',
-      icon: <GraduationCap className="h-5 w-5" />,
-      score: 83,
-      details: {
-        strengths: ['Relevant degrees', 'Academic achievements', 'Recent certifications'],
-        improvements: ['Add coursework', 'Include GPA', 'List honors'],
-        feedback: {
-          overview: 'Your education section provides a good foundation.',
-          recommendations: [
-            'Include relevant coursework',
-            'Add academic achievements and honors',
-            'List any additional certifications'
-          ],
-          impact: 'Strong education credentials can set you apart from other candidates.'
-        }
-      }
-    }
-  ];
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [analysisData, setAnalysisData] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
 
-  const [activeSection, setActiveSection] = useState(sections[0]);
+  useEffect(() => {
+    // Check if analysis data was passed during navigation
+    const { analysisResult } = location.state || {};
+    
+    if (!analysisResult) {
+      // Redirect back to upload page if no data
+      navigate('/');
+      return;
+    }
+
+    // Transform the analysis data into the sections format
+    const transformedSections = [
+      {
+        id: 'overall',
+        title: 'ATS Parse Rate',
+        icon: <Award className="h-5 w-5" />,
+        score: analysisResult.ats_parse_rate?.score || 0,
+        details: {
+          strengths: ['ATS Parsing Details'],
+          improvements: ['Improve ATS Compatibility'],
+          feedback: {
+            overview: analysisResult.ats_parse_rate?.reason || 'No specific ATS parse rate details available.',
+            recommendations: ['Optimize resume for ATS systems'],
+            impact: 'ATS parsing is crucial for initial screening.'
+          }
+        }
+      },
+      {
+        id: 'content',
+        title: 'Contact Information',
+        icon: <FileText className="h-5 w-5" />,
+        score: analysisResult.contact_information?.score || 0,
+        details: {
+          strengths: ['Contact Information Evaluation'],
+          improvements: ['Enhance Contact Details'],
+          feedback: {
+            overview: analysisResult.contact_information?.reason || 'No specific contact information details available.',
+            recommendations: ['Ensure all contact details are clear and professional'],
+            impact: 'Clear contact information is essential for potential employers.'
+          }
+        }
+      },
+      {
+        id: 'skills',
+        title: 'Skills Analysis',
+        icon: <Code className="h-5 w-5" />,
+        score: analysisResult.skills_analysis?.hard_skills?.score || 0,
+        details: {
+          strengths: analysisResult.skills_analysis?.hard_skills?.matched || ['No specific hard skills matched'],
+          improvements: analysisResult.skills_analysis?.hard_skills?.not_suited || ['No improvements suggested'],
+          feedback: {
+            overview: analysisResult.skills_analysis?.reason || 'No specific skills analysis available.',
+            recommendations: ['Continuously update and refine skills'],
+            impact: 'Skills are crucial in demonstrating job readiness.'
+          }
+        }
+      },
+      {
+        id: 'format',
+        title: 'Description Quality',
+        icon: <Layout className="h-5 w-5" />,
+        score: analysisResult.description_quality?.score || 0,
+        details: {
+          strengths: ['Description Evaluation'],
+          improvements: ['Enhance Resume Description'],
+          feedback: {
+            overview: analysisResult.description_quality?.reason || 'No specific description quality details available.',
+            recommendations: ['Improve resume language and clarity'],
+            impact: 'Clear and concise descriptions attract employer attention.'
+          }
+        }
+      },
+      {
+        id: 'experience',
+        title: 'Experience Analysis',
+        icon: <BriefcaseIcon className="h-5 w-5" />,
+        score: analysisResult.experience_analysis?.score || 0,
+        details: {
+          strengths: ['Experience Evaluation'],
+          improvements: ['Enhance Professional Experience'],
+          feedback: {
+            overview: analysisResult.experience_analysis?.reason || 'No specific experience details available.',
+            recommendations: ['Highlight key achievements and responsibilities'],
+            impact: 'Detailed experience showcases professional growth.'
+          }
+        }
+      },
+      {
+        id: 'education',
+        title: 'Education Analysis',
+        icon: <GraduationCap className="h-5 w-5" />,
+        score: analysisResult.education_analysis?.score || 0,
+        details: {
+          strengths: ['Educational Background Evaluation'],
+          improvements: ['Highlight Academic Achievements'],
+          feedback: {
+            overview: analysisResult.education_analysis?.reason || 'No specific education details available.',
+            recommendations: ['Showcase relevant academic credentials'],
+            impact: 'Strong educational background can differentiate candidates.'
+          }
+        }
+      },
+      {
+        id: 'organization',
+        title: 'Projects Analysis',
+        icon: <Layers className="h-5 w-5" />,
+        score: analysisResult.projects_analysis?.score || 0,
+        details: {
+          strengths: ['Project Evaluation'],
+          improvements: ['Add More Project Details'],
+          feedback: {
+            overview: analysisResult.projects_analysis?.reason || 'No specific projects details available.',
+            recommendations: ['Include detailed project descriptions'],
+            impact: 'Projects demonstrate practical skills and initiative.'
+          }
+        }
+      },
+      {
+        id: 'style',
+        title: 'Overall Summary',
+        icon: <Palette className="h-5 w-5" />,
+        score: analysisResult.overall_summary?.total_score || 0,
+        details: {
+          strengths: ['Overall Resume Evaluation'],
+          improvements: ['Continuous Improvement'],
+          feedback: {
+            overview: analysisResult.overall_summary?.summary || 'No specific overall summary available.',
+            recommendations: ['Continuously refine resume based on feedback'],
+            impact: 'A strong overall resume increases job application success.'
+          }
+        }
+      }
+    ];
+
+    setActiveSection(transformedSections[0]);
+    setAnalysisData({
+      sections: transformedSections,
+      overallScore: analysisResult.overall_summary?.total_score || 0
+    });
+  }, [location.state, navigate]);
 
   const handleDownload = () => {
     // Implement PDF report generation here
     console.log('Downloading report...');
   };
 
+  if (!analysisData) {
+    return <div className="min-h-screen flex items-center justify-center">Loading analysis...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          <ScoreMeter score={85} sections={sections} />
+          <ScoreMeter score={analysisData.overallScore} sections={analysisData.sections} />
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-4">
-              {sections.map((section) => (
+              {analysisData.sections.map((section) => (
                 <SectionButton
                   key={section.id}
                   icon={section.icon}

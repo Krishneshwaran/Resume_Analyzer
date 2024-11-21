@@ -29,7 +29,7 @@ def analyze_resume_view(request):
                 
                 analysis.analysis_result = analysis_result
                 analysis.save()
-                
+                print(analysis_result)
                 return JsonResponse({'success': True, 'data': analysis_result}, status=200)
             except Exception as e:
                 return JsonResponse({'success': False, 'error': str(e)}, status=400)

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FileSearch, Sparkles, Target, Award, BriefcaseIcon, GraduationCap, Code } from 'lucide-react';
-
+// import {LogIn,UserPlus} from 'react-icons'
 const Home = () => {
   const navigate = useNavigate();
 
@@ -22,6 +22,26 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-16">
+      <div className="flex justify-end space-x-4 mb-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/login')}
+            className="px-6 py-2 rounded-lg border-2 border-blue-600 text-blue-600 font-medium flex items-center space-x-2 hover:bg-blue-50 transition-colors duration-200"
+          >
+            {/* <LogIn className="h-4 w-4" /> */}
+            <span>Login</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/signup')}
+            className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium flex items-center space-x-2 hover:bg-blue-700 transition-colors duration-200"
+          >
+            {/* <UserPlus className="h-4 w-4" /> */}
+            <span>Sign Up</span>
+          </motion.button>
+        </div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <h1 className="text-5xl font-bold text-gray-900 mb-6">Elevate Your Resume</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">

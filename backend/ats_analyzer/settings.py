@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'analyzer',
     'corsheaders',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -79,8 +80,13 @@ WSGI_APPLICATION = 'ats_analyzer.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'users_db',  # The database you created on MongoDB Atlas
+        'CLIENT': {
+            'host': 'mongodb+srv://krish:krish2323@cluster0.kifg5.mongodb.net/',  # Your MongoDB URI
+            'username': 'krish',  # Replace with your MongoDB Atlas username
+            'password': 'krish2323',  # Replace with your MongoDB Atlas password
+        },
     }
 }
 
