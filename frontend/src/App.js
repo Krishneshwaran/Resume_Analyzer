@@ -1,22 +1,23 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ResumeAnalyzer from "./components/ResumeAnalyzer";
-import Results from "./components/Results";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import ResumeAnalyzer from './pages/ResumeAnalyzer';
+import ResumeAnalysis from './pages/ResumeAnalysis';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Home2 from './pages/Home2';
 
 function App() {
-  const [analysisResult, setAnalysisResult] = useState(null);
-
   return (
     <Router>
-      <div className="flex justify-center items-center min-h-screen bg-blue-50">
-        <Routes>
-          <Route
-            path="/"
-            element={<ResumeAnalyzer setAnalysisResult={setAnalysisResult} />}
-          />
-          <Route path="/results" element={<Results analysis={analysisResult} />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/analyze" element={<ResumeAnalyzer />} />
+        <Route path="/resume-analysis" element={<ResumeAnalysis />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/home" element={<Home2 />} />
+      </Routes>
     </Router>
   );
 }

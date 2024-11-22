@@ -37,11 +37,11 @@ const ResumeAnalysis = () => {
         details: {
           strengthsHeading: 'ATS Parsing Strengths',
           improvementsHeading: 'Suggestions for ATS Compatibility',
-          strengths: ['ATS Parsing Details'],
-          improvements: ['Improve ATS Compatibility'],
+          strengths: analysisResult.ats_parse_rate?.pass?.passed || ['ATS Parsing Details'],
+          improvements: analysisResult.ats_parse_rate?.pass?.improve || ['Improve ATS Compatibility'],
           feedback: {
-            overview: analysisResult.ats_parse_rate?.reason || 'No specific ATS parse rate details available.',
-            recommendations: ['Optimize resume for ATS systems'],
+            overview: analysisResult.ats_parse_rate?.reason || ['No specific ATS parse rate details available.'],
+            recommendations: analysisResult.ats_parse_rate?.recommendations || ['Optimize resume for ATS systems'],
             impact: 'ATS parsing is crucial for initial screening.'
           }
         }
@@ -54,10 +54,10 @@ const ResumeAnalysis = () => {
         details: {
           strengthsHeading: 'Contact Information Strengths',
           improvementsHeading: 'Contact Details Suggestions',
-          strengths: ['Contact Information Evaluation'],
-          improvements: ['Enhance Contact Details'],
+          strengths: analysisResult.contact_information?.contact_links?.social_links || ['Contact Information Evaluation'],
+          improvements: analysisResult.contact_information?.contact_links?.recommended || ['Enhance Contact Details'],
           feedback: {
-            overview: analysisResult.contact_information?.reason || 'No specific contact information details available.',
+            overview: analysisResult.contact_information?.reason || ['No specific contact information details available.'],
             recommendations: ['Ensure all contact details are clear and professional'],
             impact: 'Clear contact information is essential for potential employers.'
           }
@@ -72,10 +72,10 @@ const ResumeAnalysis = () => {
           strengthsHeading: 'Matched Hard Skills',
           improvementsHeading: 'Soft Skills Suggestions',
           strengths: analysisResult.skills_analysis?.hard_skills?.matched || ['No specific hard skills matched'],
-          improvements: analysisResult.skills_analysis?.soft_skills?.matched || ['No improvements suggested'],
+          improvements: analysisResult.skills_analysis?.suggested_skills?.suggested_skill || ['No improvements suggested'],
           feedback: {
-            overview: analysisResult.skills_analysis?.reason || 'No specific skills analysis available.',
-            recommendations: ['Continuously update and refine skills'],
+            overview: analysisResult.skills_analysis?.reason || ['No specific skills analysis available.'],
+            recommendations: analysisResult.skills_analysis?.recommendations || ['Continuously update and refine skills'],
             impact: 'Skills are crucial in demonstrating job readiness.'
           }
         }
@@ -88,10 +88,10 @@ const ResumeAnalysis = () => {
         details: {
           strengthsHeading: 'Resume Description Strengths',
           improvementsHeading: 'Suggestions for Description Clarity',
-          strengths: ['Description Evaluation'],
-          improvements: ['Enhance Resume Description'],
+          strengths: analysisResult.description_quality?.feedback?.strength || 'Description Evaluation',
+          improvements: analysisResult.description_quality?.feedback?.suggestions || 'Enhance Resume Description',
           feedback: {
-            overview: analysisResult.description_quality?.reason || 'No specific description quality details available.',
+            overview: analysisResult.description_quality?.reason || ['No specific description quality details available.'],
             recommendations: ['Improve resume language and clarity'],
             impact: 'Clear and concise descriptions attract employer attention.'
           }
@@ -105,10 +105,10 @@ const ResumeAnalysis = () => {
         details: {
           strengthsHeading: 'Professional Experience Highlights',
           improvementsHeading: 'Experience Enhancement Suggestions',
-          strengths: ['Experience Evaluation'],
-          improvements: ['Enhance Professional Experience'],
+          strengths: analysisResult.experience_analysis?.details?.experience || ['Experience Evaluation'],
+          improvements: analysisResult.experience_analysis?.details?.improve || ['Enhance Professional Experience'],
           feedback: {
-            overview: analysisResult.experience_analysis?.reason || 'No specific experience details available.',
+            overview: analysisResult.experience_analysis?.reason || ['No specific experience details available.'],
             recommendations: ['Highlight key achievements and responsibilities'],
             impact: 'Detailed experience showcases professional growth.'
           }
@@ -122,10 +122,10 @@ const ResumeAnalysis = () => {
         details: {
           strengthsHeading: 'Education Strengths',
           improvementsHeading: 'Suggestions for Academic Improvements',
-          strengths: ['Educational Background Evaluation'],
-          improvements: ['Highlight Academic Achievements'],
+          strengths: analysisResult.education_analysis?.details?.background || ['Educational Background Evaluation'],
+          improvements: analysisResult.education_analysis?.details?.suggest || ['Highlight Academic Achievements'],
           feedback: {
-            overview: analysisResult.education_analysis?.reason || 'No specific education details available.',
+            overview: analysisResult.education_analysis?.reason || ['No specific education details available.'],
             recommendations: ['Showcase relevant academic credentials'],
             impact: 'Strong educational background can differentiate candidates.'
           }
@@ -139,10 +139,10 @@ const ResumeAnalysis = () => {
         details: {
           strengthsHeading: 'Project Strengths',
           improvementsHeading: 'Suggestions for Project Details',
-          strengths: ['Project Evaluation'],
-          improvements: ['Add More Project Details'],
+          strengths: analysisResult.projects_analysis?.projects?.completed || ['Project Evaluation'],
+          improvements: analysisResult.projects_analysis?.projects?.suggested || ['Add More Project Details'],
           feedback: {
-            overview: analysisResult.projects_analysis?.reason || 'No specific projects details available.',
+            overview: analysisResult.projects_analysis?.reason || ['No specific projects details available.'],
             recommendations: ['Include detailed project descriptions'],
             impact: 'Projects demonstrate practical skills and initiative.'
           }
@@ -156,10 +156,10 @@ const ResumeAnalysis = () => {
         details: {
           strengthsHeading: 'Overall Resume Strengths',
           improvementsHeading: 'General Resume Suggestions',
-          strengths: ['Overall Resume Evaluation'],
-          improvements: ['Continuous Improvement'],
+          strengths: analysisResult.overall_summary?.over?.summary || ['Overall Resume Evaluation'],
+          improvements: analysisResult.overall_summary?.over?.improve || ['Continuous Improvement'],
           feedback: {
-            overview: analysisResult.overall_summary?.summary || 'No specific overall summary available.',
+            overview: analysisResult.overall_summary?.summary || ['No specific overall summary available.'],
             recommendations: ['Continuously refine resume based on feedback'],
             impact: 'A strong overall resume increases job application success.'
           }
@@ -209,12 +209,19 @@ const ResumeAnalysis = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <ScoreMeter score={analysisData.overallScore} sections={analysisData.sections} />
+      {/* Remove px-4 to allow full width and increase max-width */}
+      <div className="container mx-auto">
+        {/* Remove max-w-6xl constraint to allow full width */}
+        <div className="w-full">
+          {/* Add padding to ScoreMeter for better spacing */}
+          <div className="px-6 mb-8">
+            <ScoreMeter score={analysisData.overallScore} sections={analysisData.sections} />
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-4">
+          {/* Adjust grid layout for better space utilization */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
+            {/* Increase section list width */}
+            <div className="md:col-span-1 space-y-4">
               {analysisData.sections.map((section) => (
                 <SectionButton
                   key={section.id}
@@ -237,8 +244,11 @@ const ResumeAnalysis = () => {
               </motion.button>
             </div>
             
-            <div className="md:col-span-2">
-              <SectionDetail section={activeSection} />
+            {/* Increase detail section width */}
+            <div className="md:col-span-3">
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <SectionDetail section={activeSection} />
+              </div>
             </div>
           </div>
         </div>

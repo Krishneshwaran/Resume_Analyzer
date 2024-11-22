@@ -4,11 +4,13 @@ from django.contrib import messages
 from .forms import ResumeAnalysisForm
 from .utils import parse_pdf_resume, analyze_resume
 from .models import ResumeAnalysis  # Add this import
-
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
+api_key = settings.API_KEY
+print(api_key)
 @csrf_exempt
 def analyze_resume_view(request):
     if request.method == 'POST':
@@ -20,7 +22,7 @@ def analyze_resume_view(request):
                 resume_text = parse_pdf_resume(request.FILES['resume_file'])
                 
                 # Get analysis
-                api_key = 'AIzaSyC4o0xOcajPZf6Tl-13RSEAEBQiLT-QkE8'
+                api_key = settings.API_KEY
                 analysis_result = analyze_resume(
                     resume_text,
                     form.cleaned_data['job_description'],

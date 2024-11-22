@@ -1,4 +1,0 @@
-tailewind
-tailwindcss
-postcss
-autoprefixer

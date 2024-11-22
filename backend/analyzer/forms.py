@@ -1,8 +1,9 @@
 from django import forms
 from .models import ResumeAnalysis  # Add this import
+from django.conf import settings
 
 class ResumeAnalysisForm(forms.ModelForm):
-    api_key = "AIzaSyC4o0xOcajPZf6Tl-13RSEAEBQiLT-QkE8"
+    api_key = settings.API_KEY
     
     class Meta:
         model = ResumeAnalysis

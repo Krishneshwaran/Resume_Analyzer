@@ -93,44 +93,41 @@ const ResumeAnalyzer = () => {
                   <textarea
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg glass-input text-black/50 min-h-[150px]"
+                    className="w-full px-4 py-3 rounded-lg glass-input text-black/80 min-h-[150px]"
                     placeholder="Paste the job description here..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black mb-2">
-                    Upload Resume
-                  </label>
-                  <div
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className={`bg-white rounded-lg p-8 text-center ${
-                      isDragging
-                        ? "bg-white border-black"
-                        : "hover:border-white/40"
-                    }`}
-                  >
-                    <Upload className="h-12 w-12 mx-auto text-black" />
-                    <p className="mt-2 text-sm text-black">
-                      Drag and drop your resume here, or{" "}
-                      <label className="text-blue-500 hover:text-whiteblack cursor-pointer underline">
-                        browse
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept=".pdf"
-                          onChange={handleFileInput}
-                        />
-                      </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Upload Resume
+                </label>
+                <label
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-lg cursor-pointer bg-white transition ${
+                    isDragging
+                      ? "border-blue-500"
+                      : "border-gray-300 hover:border-blue-400"
+                  }`}
+                >
+                  <Upload className="h-12 w-12 text-gray-500" />
+                  <p className="mt-2 text-sm text-gray-500">
+                    Drag and drop your resume here, or click to browse
+                  </p>
+                  {file && (
+                    <p className="mt-2 text-sm text-gray-700 font-medium">
+                      Selected: {file.name}
                     </p>
-                    {file && (
-                      <p className="mt-2 text-sm text-black">
-                        Selected: {file.name}
-                      </p>
-                    )}
-                  </div>
+                  )}
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept=".pdf"
+                    onChange={handleFileInput}
+                  />
+                </label>
                 </div>
 
                 <motion.button
@@ -140,8 +137,8 @@ const ResumeAnalyzer = () => {
                   disabled={isLoading || !file || !jobDescription}
                   className={`w-full py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 ${
                     isLoading || !file || !jobDescription
-                      ? "bg-white cursor-not-allowed text-black"
-                      : "btn-primary"
+                      ?"bg-gray-300 cursor-not-allowed text-gray-500" // Disabled state
+      : "bg-blue-600 hover:bg-blue-700 text-white"
                   }`}
                 >
                   {isLoading ? (
